@@ -1,53 +1,58 @@
 export const slider = () => {
-    document.addEventListener('DOMContentLoaded', () => {
-        const slider = document.querySelector('.benefits-wrap');
-        const items = document.querySelectorAll('.benefits__item');
-        const prevArrow = document.querySelector('.benefits__arrow--left');
-        const nextArrow = document.querySelector('.benefits__arrow--right');
+    const items = document.querySelectorAll('.benefits__item');
+    const prevBtn = document.querySelector('.benefits__arrow--left');
+    const nextBtn = document.querySelector('.benefits__arrow--right');
 
-        let currentIndex = 0;
+    let currentIndex = 0;
+    let autoSlide;
 
-        // Определяем количество видимых элементов в зависимости от ширины экрана
-        let itemsPerSlide = () => {
-            if (window.innerWidth >= 576) {
-                return 3;
-            } else {
-                return 1;
-            }
-        };
+    function getVisibleCount() {
+        return window.innerWidth <= 576 ? 1 : 3;
+    }
 
-        const updateSliderPosition = () => {
-            const perSlide = itemsPerSlide();
-            const maxIndex = Math.ceil(items.length / perSlide) - 1;
+    function render() {
+        const visible = getVisibleCount();
+        items.forEach(item => item.classList.remove('active'));
 
-            // Ограничение по границам
-            if (currentIndex < 0) currentIndex = 0;
-            if (currentIndex > maxIndex) currentIndex = maxIndex;
+        for (let i = 0; i < visible; i++) {
+            const index = (currentIndex + i) % items.length; // зацикливание
+            items[index].classList.add('active');
+        }
+    }
 
-            const translateX = -(currentIndex * 100 * perSlide) + '%';
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % items.length;
+        render();
+    }
 
-            // Вычисляем смещение
-            slider.style.transform = `translateX(${translateX})`;
-        };
+    function prevSlide() {
+        currentIndex = (currentIndex - 1 + items.length) % items.length;
+        render();
+    }
 
-        // Обработчики стрелок
-        prevArrow.addEventListener('click', () => {
-            currentIndex--;
-            updateSliderPosition();
-        });
-
-        nextArrow.addEventListener('click', () => {
-            currentIndex++;
-            updateSliderPosition();
-        });
-
-        // Обновление при изменении размера окна
-        window.addEventListener('resize', () => {
-            updateSliderPosition();
-        });
-
-        // Инициализация
-        updateSliderPosition();
+    nextBtn.addEventListener('click', () => {
+        nextSlide();
+        resetAutoSlide();
     });
 
-}
+    prevBtn.addEventListener('click', () => {
+        prevSlide();
+        resetAutoSlide();
+    });
+
+    function startAutoSlide() {
+        autoSlide = setInterval(nextSlide, 2000);
+    }
+
+    function resetAutoSlide() {
+        clearInterval(autoSlide);
+        startAutoSlide();
+    }
+
+    window.addEventListener('resize', () => {
+        render();
+    });
+
+    render();
+    startAutoSlide();
+};
