@@ -1,3 +1,4 @@
+import { calc } from "./modules/calc";
 import { modal } from "./modules/modal";
 import { sertificatesModal } from "./modules/sertificates";
 import { slider } from "./modules/slider";
@@ -14,3 +15,4 @@ timer()
 validForms()
 sertificatesModal();
 smoothScroll()
+calc()

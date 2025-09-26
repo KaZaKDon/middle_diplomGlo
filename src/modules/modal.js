@@ -1,25 +1,42 @@
 export const modal = () => {
+    const modalWindow = document.querySelector('.header-modal');
+    const overlay = document.querySelector('.overlay');
+
+    // Открытие модалки
     document.querySelectorAll('.fancyboxModal').forEach(function (button) {
         button.addEventListener('click', function (e) {
             e.preventDefault();
-            // Показываем модальное окно
-            document.querySelector('.header-modal').style.display = 'block';
-            // Можно добавить скрытие подложки, если есть
-            document.querySelector('.overlay').style.display = 'block';
+            modalWindow.style.display = 'block';
+            overlay.style.display = 'block';
         });
     });
 
-    // Закрытие модального окна при клике на крестик
+    // Закрытие по крестику
     document.querySelectorAll('.header-modal__close').forEach(function (closeBtn) {
         closeBtn.addEventListener('click', function () {
-            document.querySelector('.header-modal').style.display = 'none';
-            document.querySelector('.overlay').style.display = 'none';
+            modalWindow.style.display = 'none';
+            overlay.style.display = 'none';
         });
     });
 
-    // Также можно закрывать окно при клике на подложку (если есть такая возможность)
-    document.querySelector('.overlay').addEventListener('click', function () {
-        document.querySelector('.header-modal').style.display = 'none';
+    // Закрытие по клику на подложку
+    overlay.addEventListener('click', function () {
+        modalWindow.style.display = 'none';
         this.style.display = 'none';
     });
-}
+
+    // ✅ Закрытие по отправке формы
+    document.querySelectorAll('.header-modal form').forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // чтобы страница не перезагружалась
+
+            // Тут можно добавить проверку на ошибки, если используешь validForms
+            // Если ошибок нет — закрываем
+            modalWindow.style.display = 'none';
+            overlay.style.display = 'none';
+
+            // А ещё сбросим форму
+            form.reset();
+        });
+    });
+};

@@ -1,76 +1,77 @@
 export const validForms = () => {
-    document.addEventListener("DOMContentLoaded", () => {
-        // Все формы на странице
-        const forms = document.querySelectorAll("form[name='action-form'], form[name='action-form2']");
+    const forms = document.querySelectorAll("form");
 
-        forms.forEach(form => {
-            form.addEventListener("submit", function (e) {
-                e.preventDefault();
+    forms.forEach(form => {
+        const nameInput = form.querySelector("input[name='fio']");
+        const phoneInput = form.querySelector("input[name='phone']");
 
-                const nameInput = form.querySelector("input[name='fio']");
-                const phoneInput = form.querySelector("input[name='phone']");
+        if (!nameInput || !phoneInput) return;
 
-                const name = nameInput.value.trim();
-                const phone = phoneInput.value.trim();
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
 
-                // Регулярки для проверки
-                const nameRegex = /^[a-zA-Zа-яА-ЯёЁ\s]+$/; // только буквы и пробелы
-                const phoneRegex = /^\+?\d{7,16}$/; // + опционально и до 16 цифр
+            const name = nameInput.value.trim();
+            const phone = phoneInput.value.trim();
 
-                // Валидация
-                let errors = [];
+            // Убираем все лишние символы кроме цифр и плюса
+            const cleanPhone = phone.replace(/[^\d+]/g, "");
 
-                if (!name && !phone) {
-                    errors.push("Заполните оба поля");
-                } else {
-                    if (!name) {
-                        errors.push("Введите имя");
-                    } else if (!nameRegex.test(name)) {
-                        errors.push("Имя может содержать только буквы (русские или латинские)");
-                    }
+            // Регулярки
+            const nameRegex = /^[a-zA-Zа-яА-ЯёЁ\s]+$/;
+            const phoneRegex = /^\+?\d{7,16}$/;
 
-                    if (!phone) {
-                        errors.push("Введите телефон");
-                    } else if (!phoneRegex.test(phone)) {
-                        errors.push("Телефон должен содержать только + и цифры (до 16)");
-                    }
+            let errors = [];
+
+            if (!name && !cleanPhone) {
+                errors.push("Заполните оба поля");
+            } else {
+                if (!name) {
+                    errors.push("Введите имя");
+                } else if (!nameRegex.test(name)) {
+                    errors.push("Имя может содержать только буквы (русские или латинские)");
                 }
 
-                if (errors.length > 0) {
-                    alert(errors.join("\n"));
-                    return;
+                if (!cleanPhone) {
+                    errors.push("Введите телефон");
+                } else if (!phoneRegex.test(cleanPhone)) {
+                    errors.push("Телефон должен содержать от 7 до 16 цифр (с плюсом или без)");
                 }
+            }
 
-                // ✅ Если ошибок нет — собираем JSON
-                const data = {
-                    fio: name,
-                    phone: phone,
-                    page: form.querySelector("input[name='page']") ?
-                        form.querySelector("input[name='page']").value :
-                        "Не указана"
-                };
+            if (errors.length > 0) {
+                alert(errors.join("\n"));
+                return;
+            }
 
-                console.log("Отправка данных:", JSON.stringify(data));
+            const data = {
+                fio: name,
+                phone: cleanPhone,
+                page: form.querySelector("input[name='page']")
+                    ? form.querySelector("input[name='page']").value
+                    : "Не указана"
+            };
 
-                /* Пример отправки через fetch
-                fetch("/send.php", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(data)
-                    })
-                    .then(res => res.json())
-                    .then(result => {
-                        alert("Заявка успешно отправлена!");
-                        console.log(result);
-                        form.reset();
-                    })
-                    .catch(err => {
-                        alert("Ошибка при отправке!");
-                        console.error(err);
-                    });*/
-            });
+            console.log("Отправка данных:", JSON.stringify(data));
+            form.reset();
         });
     });
-}
+};
+            // пример отправки
+            /*
+            fetch("/send.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(result => {
+                alert("Заявка успешно отправлена!");
+                form.reset();
+            })
+            .catch(err => {
+                alert("Ошибка при отправке!");
+                console.error(err);
+            });
+            */
