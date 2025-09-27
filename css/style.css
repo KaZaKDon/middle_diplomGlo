@@ -1807,3 +1807,26 @@ input.error {
   color: #ff5555;
   transform: rotate(90deg);
 }
+
+.input-error {
+  border: 2px solid red !important;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+/* Чтобы при фокусе было видно, что пользователь исправляет */
+.input-error:focus {
+  border-color: darkred !important;
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+
+/* Сообщение об ошибке */
+.error-message {
+  font-size: 14px;
+  color: red;
+  margin-top: 5px;
+  white-space: pre-line; /* чтобы переносились строки из join("\n") */
+}
+.is-invalid {
+    border: 2px solid red !important;
+}

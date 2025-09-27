@@ -10,48 +10,64 @@ export const validForms = () => {
         form.addEventListener("submit", function (e) {
             e.preventDefault();
 
+            // удалить старые ошибки
+            form.querySelectorAll(".-message").forEach(msg => msg.remove());
+
             const name = nameInput.value.trim();
             const phone = phoneInput.value.trim();
-
-            // Убираем все лишние символы кроме цифр и плюса
             const cleanPhone = phone.replace(/[^\d+]/g, "");
 
-            // Регулярки
             const nameRegex = /^[a-zA-Zа-яА-ЯёЁ\s]+$/;
             const phoneRegex = /^\+?\d{7,16}$/;
 
-            let errors = [];
+            //let errors = [];
 
             if (!name && !cleanPhone) {
-                errors.push("Заполните оба поля");
+                alert("Заполните оба поля");
             } else {
                 if (!name) {
-                    errors.push("Введите имя");
+                    alert("Введите имя");
                 } else if (!nameRegex.test(name)) {
-                    errors.push("Имя может содержать только буквы (русские или латинские)");
+                    alert("Имя может содержать только буквы (русские или латинские)");
                 }
 
                 if (!cleanPhone) {
-                    errors.push("Введите телефон");
+                    alert("Введите телефон");
                 } else if (!phoneRegex.test(cleanPhone)) {
-                    errors.push("Телефон должен содержать от 7 до 16 цифр (с плюсом или без)");
+                    alert("Телефон должен содержать от 7 до 16 цифр (с плюсом или без)");
                 }
             }
 
-            if (errors.length > 0) {
-                alert(errors.join("\n"));
-                return;
+            console.log(name, phone);
+
+            /*if (errors.length > 0) {
+                const errorMessage = document.createElement("div");
+                errorMessage.classList.add("-message");
+                errorMessage.style.color = "red";
+                errorMessage.innerText = errors.join("\n");
+                form.appendChild(errorMessage);
+                return; // ❌ не отправляем дальше
             }
 
+            // ✅ Если дошли сюда, значит ошибок нет
             const data = {
                 fio: name,
                 phone: cleanPhone,
                 page: form.querySelector("input[name='page']")
                     ? form.querySelector("input[name='page']").value
                     : "Не указана"
-            };
+            };*/
 
             console.log("Отправка данных:", JSON.stringify(data));
+
+            // закрываем модалку и сбрасываем форму вручную
+            const modalWindow = document.querySelector('.header-modal');
+            const overlay = document.querySelector('.overlay');
+            if (modalWindow && overlay) {
+                modalWindow.style.display = 'none';
+                overlay.style.display = 'none';
+            }
+
             form.reset();
         });
     });
